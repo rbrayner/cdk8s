@@ -36,3 +36,9 @@ deploy-with-cdk8s-webservices:
 
 destroy-with-cdk8s-webservices:
 	@cd webservice && kubectl delete -f dist/web-services.k8s.yaml
+
+deploy-with-cdk8s-plus:
+	@cd plus && cdk8s synth && kubectl apply -f dist/chart-c86185a7.k8s.yaml
+
+destroy-with-cdk8s-plus:
+	@cd plus && kubectl delete -f dist/chart-c86185a7.k8s.yaml
