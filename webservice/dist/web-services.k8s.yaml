@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-services-hello-service-c8867cc5
+spec:
+  ports:
+    - nodePort: 31000
+      port: 80
+  selector:
+    app: web-services-hello-c8c4e53d
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-services-hello-deployment-c8aa3bdf
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-services-hello-c8c4e53d
+  template:
+    metadata:
+      labels:
+        app: web-services-hello-c8c4e53d
+    spec:
+      containers:
+        - image: pbitty/hello-from:latest
+          name: web
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-services-world-service-c8af1a33
+spec:
+  ports:
+    - nodePort: 32000
+      port: 80
+  selector:
+    app: web-services-world-c8ce02b3
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-services-world-deployment-c8cf63b9
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-services-world-c8ce02b3
+  template:
+    metadata:
+      labels:
+        app: web-services-world-c8ce02b3
+    spec:
+      containers:
+        - image: nginx:latest
+          name: web
+          ports:
+            - containerPort: 80

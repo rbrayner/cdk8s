@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-hello-deployment-c8573076
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hello
+  template:
+    metadata:
+      labels:
+        app: hello
+    spec:
+      containers:
+        - image: pbitty/hello-from:latest
+          name: hello
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service-c8c17160
+spec:
+  ports:
+    - nodePort: 31000
+      port: 80
+  selector:
+    app: hello
+  type: NodePort

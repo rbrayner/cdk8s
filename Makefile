@@ -24,3 +24,15 @@ deploy-pods:
 
 deploy-service:
 	@kubectl apply -f service.yaml
+
+deploy-with-cdk8s-basic:
+	@cd basic && cdk8s synth && kubectl apply -f dist/hello.k8s.yaml
+
+destroy-with-cdk8s-basic:
+	@cd basic && kubectl delete -f dist/hello.k8s.yaml
+
+deploy-with-cdk8s-webservices:
+	@cd webservice && cdk8s synth && kubectl apply -f dist/web-services.k8s.yaml
+
+destroy-with-cdk8s-webservices:
+	@cd webservice && kubectl delete -f dist/web-services.k8s.yaml
