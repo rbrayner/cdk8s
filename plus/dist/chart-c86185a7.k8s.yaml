@@ -1,14 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: chart-deployment-c8a3b439
+  labels:
+    app: hello
+  name: chart-hellodeployment-c8a44c2f
 spec:
   minReadySeconds: 0
   progressDeadlineSeconds: 600
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      cdk8s.io/metadata.addr: Chart-Deployment-c822d80c
+      cdk8s.io/metadata.addr: Chart-HelloDeployment-c84a200a
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -17,13 +19,15 @@ spec:
   template:
     metadata:
       labels:
-        cdk8s.io/metadata.addr: Chart-Deployment-c822d80c
+        cdk8s.io/metadata.addr: Chart-HelloDeployment-c84a200a
     spec:
       automountServiceAccountToken: false
       containers:
-        - image: nginx
+        - image: pbitty/hello-from:latest
           imagePullPolicy: Always
           name: main
+          ports:
+            - containerPort: 80
           resources:
             limits:
               cpu: 1500m
@@ -35,7 +39,11 @@ spec:
             allowPrivilegeEscalation: false
             privileged: false
             readOnlyRootFilesystem: true
-            runAsNonRoot: true
+            runAsNonRoot: false
+          startupProbe:
+            failureThreshold: 3
+            tcpSocket:
+              port: 80
       dnsPolicy: ClusterFirst
       hostNetwork: false
       restartPolicy: Always
@@ -44,3 +52,16 @@ spec:
         runAsNonRoot: true
       setHostnameAsFQDN: false
       terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chart-helloservice-c8445bba
+spec:
+  externalIPs: []
+  ports:
+    - nodePort: 31000
+      port: 80
+  selector:
+    cdk8s.io/metadata.addr: Chart-HelloDeployment-c84a200a
+  type: NodePort
