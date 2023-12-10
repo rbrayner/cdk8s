@@ -1,28 +1,26 @@
+"""This module contains a webservice demo"""
 from constructs import Construct
-from cdk8s import Names
-
 from imports import k8s
+from cdk8s import Names
 
 
 class WebService(Construct):
+    """The WebServices class"""
     def __init__(
         self,
         scope: Construct,
-        id: str,
+        app_id: str,
         *,
         image: str,
         replicas=1,
-        node_port=31000,
-        container_port=80,
-        **kwargs
+        node_port: int,
+        container_port=80
     ):
-        super().__init__(scope, id)
+        super().__init__(scope, app_id)
 
         label = {"app": Names.to_label_value(self)}
 
-        k8s.KubeService(
-            self,
-            "service",
+        k8s.KubeService(self, "service",
             spec=k8s.ServiceSpec(
                 type="NodePort",
                 ports=[
@@ -35,9 +33,7 @@ class WebService(Construct):
             ),
         )
 
-        k8s.KubeDeployment(
-            self,
-            "deployment",
+        k8s.KubeDeployment(self, "deployment",
             spec=k8s.DeploymentSpec(
                 replicas=replicas,
                 selector=k8s.LabelSelector(match_labels=label),
